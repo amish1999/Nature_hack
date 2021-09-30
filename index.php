@@ -286,25 +286,85 @@ unset($_SESSION['offset'])
 			  });
 		}
 		
-			
-		<!--------------->
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+		//updating the tips realtime from the file if user wants
+		function get_tips() {
+			$.get("readtips.php", function(data) {
+				if(data!="" && data!="<br>"){
+					$('#tips').append(data);
+				}
+			  });
+		}
+		
+		//chart showing consumtion for hour
+		$(function () {
+			$('#hourchart').highcharts({
+				chart: {
+					type: 'column'
+				},
+				title: {
+					text: 'Hourly Visualization'
+				},
+				xAxis: {
+					categories: ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24'],
+					title: {
+						text: 'Number of Hours'
+					}
+				},
+				yAxis: {
+					min: 0,
+					title: {
+						text: 'Consumption (Wh)'
+					},
+					stackLabels: {
+						enabled: false,
+						style: {
+							fontWeight: 'bold',
+							color: (Highcharts.theme && Highcharts.theme.textColor) || 'white'
+						}
+					}
+				},
+				legend: {
+					align: 'right',
+					x: -70,
+					verticalAlign: 'top',
+					y: 0,
+					floating: true,
+					backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) || 'rgba(0, 112, 255, 0.26)',
+					borderColor: 'black',
+					borderWidth: 0.5,
+					shadow: true
+				},
+				tooltip: {
+					formatter: function() {
+						return '<b>'+ this.x +'</b><br/>'+
+							this.series.name +': '+ this.y +'<br/>'+
+							'Total: '+ this.point.stackTotal;
+					}
+				},
+				plotOptions: {
+					column: {
+						stacking: 'normal',
+						dataLabels: {
+							enabled: false,
+							color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+							style: {
+								textShadow: '0 0 3px black, 0 0 3px black'
+							}
+						}
+					}
+				},
+				series: [{
+					name: 'Excess Usage',
+					data: overshootedhr
+				},{
+					name: 'Safe Consumption',
+					data: thresholdhr
+				},{
+					name: 'Consumed',
+					data: actualhr
+				}]
+			});
+		});	
 		
 		//chart showing consumtion for day
 		$(function () {
